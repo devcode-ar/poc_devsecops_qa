@@ -16,24 +16,18 @@ jobs:
       name: Gitleaks
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v3
+        - name: Gitleaks Scan
           with:
-            fetch-depth: 0
-        - uses: gastonbarbaccia/gitleaks@v2.1
-          env:
-            GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
-        - name: Get the output from the gitleaks step
-          run: |
-            echo "exitcode: ${{ steps.gitleaks.outputs.exitcode }}"
-            echo "result: ${{ steps.gitleaks.outputs.result }}"
-            echo "output: ${{ steps.gitleaks.outputs.output }}"
-            echo "command: ${{ steps.gitleaks.outputs.command }}"
-            echo "report: ${{ steps.gitleaks.outputs.report }}"
-        - name: Upload SARIF report
-          if: steps.gitleaks.outputs.exitcode == 1
-          uses: github/codeql-action/upload-sarif@v2
-          with:
-            sarif_file: ${{ steps.gitleaks.outputs.report }} 
+            script: |
+                apt-get update && apt-get upgrade -yy
+                apt-get install git wget golang-go -y
+                wget https://github.com/gitleaks/gitleaks/releases/download/v8.17.0/gitleaks_8.17.0_linux_x64.tar.gz
+                tar -zxvf gitleaks_8.17.0_linux_x64.tar.gz
+                chmod +x gitleaks
+                mv gitleaks /usr/local/bin/
+                set +e
+                gitleaks detect -v -r gitleaks-report.json
+                set -e
 
   sonarcloud:
     name: SonarCloud
