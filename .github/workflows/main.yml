@@ -100,22 +100,25 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Build an image from Dockerfile
         run: |
           docker build -t name:${{ github.sha }} .
-      - name: Run Trivy vulnerability scanner
+
+      - name: Run Trivy vulnerability scanner in IaC mode
         uses: aquasecurity/trivy-action@master
         id: trivy
         with:
-          image-ref: 'name:${{ github.sha }}'
-          format: 'table'
+          scan-type: 'config'
+          hide-progress: false
+          format: 'json'
+          output: 'trivy-results.json'
           exit-code: '1'
           ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
-          output: 'trivy-report.json'
+          severity: 'CRITICAL,HIGH'
+
       - name: Upload Test results
         uses: actions/upload-artifact@master
         with:
           name: trivy
-          path: ${{github.workspace}}/trivy-report.json
+          path: ${{github.workspace}}/trivy-results.json
