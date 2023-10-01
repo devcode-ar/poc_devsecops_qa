@@ -81,9 +81,9 @@ jobs:
         id: tfsec
         with:
           soft_fail: true
-          additional_args: -f json
+          additional_args:  -r gitleaks-report.json
       - name: Upload Test results
         uses: actions/upload-artifact@master
         with:
           name: tfsec
-          path: ${{github.workspace}}/
+          path: ${{github.workspace}}/gitleaks-report.json
