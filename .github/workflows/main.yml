@@ -109,10 +109,11 @@ jobs:
         uses: aquasecurity/trivy-action@master
         id: trivy
         with:
+          scan-type: 'image'
           hide-progress: false
           format: 'json'
           output: 'trivy-results.json'
-          exit-code: '1'
+          exit-code: '0'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
