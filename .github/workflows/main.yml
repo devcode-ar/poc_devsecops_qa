@@ -132,13 +132,10 @@ jobs:
 #    needs: [trivy]
     steps:
       - name: ZAP Scan
-        uses: zaproxy/action-full-scan@v0.7.0
+        uses: gastonbarbaccia/zap-action-full-scan@v0.1.1
         with:
           target: 'https://www.admingb.com/'
       
-      - name: Test
-        run: ls -l
-
       - name: Upload Test results
         uses: actions/upload-artifact@master
         with:
