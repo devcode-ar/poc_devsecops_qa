@@ -69,21 +69,21 @@ jobs:
           name: Depcheck report
           path: ${{github.workspace}}/reports
 
-  tfsec:
-    name: Tfscan
-    runs-on: ubuntu-latest
 
+  tfsec:
+    name: tfsec
+    runs-on: ubuntu-latest
     steps:
       - name: Clone repo
         uses: actions/checkout@master
-
       - name: tfsec
-        uses: tfsec/tfsec-sarif-action@master
+        uses: aquasecurity/tfsec-action@v1.0.0
+        id: tfsec
         with:
-          sarif_file: tfsec.sarif         
-
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v2
+          soft_fail: true
+          additional_args: -f json
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
         with:
-          # Path to SARIF file relative to the root of the repository
-          sarif_file: tfsec.sarif  
+          name: tfsec
+          path: ${{github.workspace}}/
