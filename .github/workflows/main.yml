@@ -106,6 +106,7 @@ jobs:
           docker build -t name:${{ github.sha }} .
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
+        id: trivy
         with:
           image-ref: 'name:${{ github.sha }}'
           format: 'json'
@@ -113,3 +114,9 @@ jobs:
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL,HIGH'
+          output: 'trivy-report.json'
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
+        with:
+          name: trivy
+          path: ${{github.workspace}}/trivy-report.json
