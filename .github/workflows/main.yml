@@ -19,7 +19,7 @@ jobs:
         - name: Gitleaks Scan
           shell: bash
           run: |
-                sudo apt-get update && apt-get upgrade -yy
+                sudo apt-get update && apt-get upgrade -y
                 sudo apt-get install git wget golang-go -y
                 sudo wget https://github.com/gitleaks/gitleaks/releases/download/v8.17.0/gitleaks_8.17.0_linux_x64.tar.gz
                 sudo tar -zxvf gitleaks_8.17.0_linux_x64.tar.gz
