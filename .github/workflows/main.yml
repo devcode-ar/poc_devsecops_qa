@@ -117,11 +117,8 @@ jobs:
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
-      - name: Testing list
-        run: ls -l
-
-#      - name: Upload Test results
-#        uses: actions/upload-artifact@master
-#        with:
-#          name: trivy
-#          path: ${{github.workspace}}/trivy-results.json
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
+        with:
+          name: trivy
+          path: ${{github.workspace}}/trivy-results.json
