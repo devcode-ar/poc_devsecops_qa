@@ -109,7 +109,6 @@ jobs:
         uses: aquasecurity/trivy-action@master
         id: trivy
         with:
-          scan-type: 'config'
           hide-progress: false
           format: 'json'
           output: 'trivy-results.json'
