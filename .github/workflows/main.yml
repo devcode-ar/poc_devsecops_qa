@@ -80,3 +80,5 @@ jobs:
         with:
           soft_fail: true
           format: json
+      - name: listar reporte
+        run: ls -l
