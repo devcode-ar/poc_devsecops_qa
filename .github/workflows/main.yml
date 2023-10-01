@@ -23,7 +23,6 @@ jobs:
           fetch-depth: 0
       
       - name: Run Gitleaks
-        id: gitleaks
         uses: DariuszPorowski/github-action-gitleaks@v2
         with:
           config: MyGitleaksConfigs/MyGitleaksConfig.toml
@@ -63,7 +62,6 @@ jobs:
 
       - name: Depcheck
         uses: dependency-check/Dependency-Check_Action@main
-        id: Depcheck
         with:
           project: "test"
           path: "."
@@ -87,7 +85,6 @@ jobs:
 
       - name: tfsec
         uses: aquasecurity/tfsec-action@v1.0.0
-        id: tfsec
         with:
           soft_fail: true
           additional_args: --format=json  --out  tfscan-report.json
@@ -98,7 +95,7 @@ jobs:
           name: Tfsec report
           path: ${{github.workspace}}/tfscan-report.json
 
-  Trivy:
+  trivy:
     name: Trivy Scan
     runs-on: ubuntu-latest
     continue-on-error: true    
@@ -113,7 +110,6 @@ jobs:
 
       - name: Run Trivy vulnerability scanner in IaC mode
         uses: aquasecurity/trivy-action@master
-        id: trivy
         with:
           scan-type: 'image name:${{ github.sha }}'
           hide-progress: false
@@ -128,3 +124,20 @@ jobs:
         with:
           name: Trivy report
           path: ${{github.workspace}}/trivy-results.json
+
+  OWASP_ZAP:
+    name: OWASP ZAP Scan
+    runs-on: ubuntu-latest
+    continue-on-error: true    
+#    needs: [trivy]
+    steps:
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.7.0
+        with:
+          target: 'https://www.zaproxy.org/'
+          cmd_options: '-a -x ZAP-results'
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
+        with:
+          name: ZAP report
+          path: ${{github.workspace}}/ZAP-results.xml
