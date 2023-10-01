@@ -81,7 +81,7 @@ jobs:
         id: tfsec
         with:
           soft_fail: true
-          additional_args:  -r gitleaks-report.json
+          additional_args: --format=json  --out  gitleaks-report.json
       - name: Upload Test results
         uses: actions/upload-artifact@master
         with:
