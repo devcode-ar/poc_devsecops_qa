@@ -97,7 +97,6 @@ jobs:
     name: Trivy Scan
     runs-on: ubuntu-latest
     needs: [tfsec]
-    continue-on-error: true
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
