@@ -13,22 +13,26 @@ on:
 
 jobs:
   gitleaks:
-      name: Gitleaks
-      runs-on: ubuntu-latest
-      continue-on-error: true
-      steps:
-        - name: Gitleaks Scan
-          shell: bash
-          run: |
-                sudo apt-get update -y
-                sudo apt-get upgrade -y
-                sudo apt-get install git wget golang-go -y
-                sudo wget https://github.com/gitleaks/gitleaks/releases/download/v8.17.0/gitleaks_8.17.0_linux_x64.tar.gz
-                sudo tar -zxvf gitleaks_8.17.0_linux_x64.tar.gz
-                sudo chmod +x gitleaks
-                sudo gitleaks detect -v -r gitleaks-report.json
-#                sudo mv gitleaks /usr/local/bin/
-#                sudo gitleaks detect -v -r gitleaks-report.json
+    name: gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Run Gitleaks
+        id: gitleaks
+        uses: DariuszPorowski/github-action-gitleaks@v2
+        with:
+          config: MyGitleaksConfigs/MyGitleaksConfig.toml
+      
+      - name: Upload Gitleaks JSON report to artifacts
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: gitleaks
+          path: ${{ steps.gitleaks.outputs.report }}
 
 
   sonarcloud:
