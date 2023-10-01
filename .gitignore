@@ -1,1 +1,2 @@
-wget-1.15.tar.gz
+src/*
+mysql/*

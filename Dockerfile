@@ -1,38 +1,20 @@
-FROM debian:9.2
+FROM php:7.3-fpm-alpine
 
-LABEL maintainer "opsxcq@strm.sh"
+RUN docker-php-ext-install pdo pdo_mysql
 
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    debconf-utils && \
-    echo mariadb-server mysql-server/root_password password vulnerables | debconf-set-selections && \
-    echo mariadb-server mysql-server/root_password_again password vulnerables | debconf-set-selections && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    apache2 \
-    mariadb-server \
-    php \
-    php-mysql \
-    php-pgsql \
-    php-pear \
-    php-gd \
-    && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-COPY php.ini /etc/php5/apache2/php.ini
-COPY dvwa /var/www/html
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY config.inc.php /var/www/html/config/
 
-RUN chown www-data:www-data -R /var/www/html && \
-    rm /var/www/html/index.html
+ARG PUID=33
+ARG PGID=33
+# RUN groupmod -g $PGID www-data \
+#     && usermod -u $PUID www-data
 
-RUN service mysql start && \
-    sleep 3 && \
-    mysql -uroot -pvulnerables -e "CREATE USER app@localhost IDENTIFIED BY 'vulnerables';CREATE DATABASE dvwa;GRANT ALL privileges ON dvwa.* TO 'app'@localhost;"
+RUN chown -R www-data:www-data /var/www
+RUN chmod 755 /var/www
 
-EXPOSE 80
+# COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-COPY main.sh /
-ENTRYPOINT ["/main.sh"]
+# CMD ["curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer"]
