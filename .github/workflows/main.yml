@@ -109,7 +109,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         id: trivy
         with:
-          scan-type: 'image'
+          scan-type: 'image name:${{ github.sha }}'
           hide-progress: false
           format: 'json'
           output: 'trivy-results.json'
