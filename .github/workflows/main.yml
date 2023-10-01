@@ -88,13 +88,13 @@ jobs:
         uses: aquasecurity/tfsec-action@v1.0.0
         with:
           soft_fail: true
-          additional_args: --format=json  --out  tfscan-report.json
+          additional_args: --format=json  --out  tfsec-report.json
 
       - name: Upload Test results
         uses: actions/upload-artifact@master
         with:
           name: Tfsec report
-          path: ${{github.workspace}}/tfscan-report.json
+          path: ${{github.workspace}}/tfsec-report.json
 
   trivy:
     name: Trivy Scan
