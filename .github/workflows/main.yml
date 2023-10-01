@@ -1,0 +1,70 @@
+name: DevSecOps Pipeline
+
+
+on:
+  push:
+    branches:
+      - main
+
+  pull_request:
+    branches:
+      - main
+
+
+jobs:
+  gitleaks:
+      name: Gitleaks
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3
+          with:
+            fetch-depth: 0
+        - uses: gastonbarbaccia/gitleaks@v2.1
+          env:
+            GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+        - name: Get the output from the gitleaks step
+          run: |
+            echo "exitcode: ${{ steps.gitleaks.outputs.exitcode }}"
+            echo "result: ${{ steps.gitleaks.outputs.result }}"
+            echo "output: ${{ steps.gitleaks.outputs.output }}"
+            echo "command: ${{ steps.gitleaks.outputs.command }}"
+            echo "report: ${{ steps.gitleaks.outputs.report }}"
+        - name: Upload SARIF report
+          if: steps.gitleaks.outputs.exitcode == 1
+          uses: github/codeql-action/upload-sarif@v2
+          with:
+            sarif_file: ${{ steps.gitleaks.outputs.report }} 
+
+  sonarcloud:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  dependency_check:
+    name: Dependency check Scan
+    runs-on: ubuntu-latest
+    needs: [sonarcloud]
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Depcheck
+        uses: dependency-check/Dependency-Check_Action@main
+        id: Depcheck
+        with:
+          project: "test"
+          path: "."
+          format: "HTML"
+      - name: Upload Test results
+        uses: actions/upload-artifact@master
+        with:
+          name: Depcheck report
+          path: ${{github.workspace}}/reports
