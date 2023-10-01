@@ -135,7 +135,6 @@ jobs:
         uses: zaproxy/action-full-scan@v0.7.0
         with:
           target: 'https://www.admingb.com/'
-          cmd_options: '-a'
 
       - name: Upload Test results
         uses: actions/upload-artifact@master
