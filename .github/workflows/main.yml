@@ -32,7 +32,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: failure()
         with:
-          name: gitleaks
+          name: Gitleaks report
           path: ${{ steps.gitleaks.outputs.report }}
 
 
@@ -95,7 +95,7 @@ jobs:
       - name: Upload Test results
         uses: actions/upload-artifact@master
         with:
-          name: tfsec
+          name: Tfsec report
           path: ${{github.workspace}}/tfscan-report.json
 
   Trivy:
@@ -126,5 +126,5 @@ jobs:
       - name: Upload Test results
         uses: actions/upload-artifact@master
         with:
-          name: trivy
+          name: Trivy report
           path: ${{github.workspace}}/trivy-results.json
