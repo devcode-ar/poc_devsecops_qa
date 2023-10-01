@@ -132,7 +132,7 @@ jobs:
 #    needs: [trivy]
     steps:
       - name: ZAP Scan
-        uses: gastonbarbaccia/zap-action-full-scan@v0.1.1
+        uses: gastonbarbaccia/zap-action-full-scan@v0.1.2
         with:
           target: 'https://www.admingb.com/'
       
