@@ -109,11 +109,11 @@ jobs:
         id: trivy
         with:
           image-ref: 'name:${{ github.sha }}'
-          format: 'json'
+          format: 'table'
           exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
-#          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL,HIGH'
           output: 'trivy-report.json'
       - name: Upload Test results
         uses: actions/upload-artifact@master
