@@ -96,7 +96,7 @@ jobs:
   Trivy:
     name: Trivy Scan
     runs-on: ubuntu-latest
-    needs: [tfsec]
+#    needs: [tfsec]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -117,8 +117,11 @@ jobs:
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
 
-      - name: Upload Test results
-        uses: actions/upload-artifact@master
-        with:
-          name: trivy
-          path: ${{github.workspace}}/trivy-results.json
+      - name: Testing list
+        run: ls -l
+
+#      - name: Upload Test results
+#        uses: actions/upload-artifact@master
+#        with:
+#          name: trivy
+#          path: ${{github.workspace}}/trivy-results.json
