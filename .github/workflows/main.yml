@@ -140,4 +140,4 @@ jobs:
         uses: actions/upload-artifact@master
         with:
           name: ZAP report
-          path: ${{github.workspace}}/report_json.json
+          path: ${{github.workspace}}/report_xml.xml
