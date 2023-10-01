@@ -70,15 +70,20 @@ jobs:
           path: ${{github.workspace}}/reports
 
   tfsec:
-    name: tfsec
+    name: tfsec sarif report
     runs-on: ubuntu-latest
+
     steps:
       - name: Clone repo
         uses: actions/checkout@master
+
       - name: tfsec
-        uses: aquasecurity/tfsec-action@v1.0.0
+        uses: tfsec/tfsec-sarif-action@main
         with:
-          soft_fail: true
-          format: json
-      - name: listar reporte
-        run: ls -l
+          sarif_file: tfsec.sarif         
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          # Path to SARIF file relative to the root of the repository
+          sarif_file: tfsec.sarif  
