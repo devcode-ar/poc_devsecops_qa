@@ -17,8 +17,7 @@ jobs:
       runs-on: ubuntu-latest
       steps:
         - name: Gitleaks Scan
-          with:
-            run: |
+          run: |
                 apt-get update && apt-get upgrade -yy
                 apt-get install git wget golang-go -y
                 wget https://github.com/gitleaks/gitleaks/releases/download/v8.17.0/gitleaks_8.17.0_linux_x64.tar.gz
