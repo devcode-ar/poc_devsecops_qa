@@ -1,40 +1,32 @@
-FROM python:3.8-slim as build-base
+FROM ubuntu:bionic-20180426
 
-RUN apt update && apt install -y --no-install-recommends gcc make wget python3-dev&& \
-    python -m venv --copies --system-site-packages /opt/venv && \
-    pip install pip --upgrade
-    
-ENV PATH="/opt/venv/bin:$PATH"
+ENV DEBIAN_FRONTEND="noninteractive"
 
-FROM build-base as intermediate-build
+#Install dependencies
+RUN apt-get update && apt-get upgrade -y
 
-SHELL ["/bin/bash","-c"]
+#Curl Vulnerability https://www.cvedetails.com/cve/CVE-2018-1000300/
+RUN apt-get install -y curl && \
+#GIT Vulnerability CVE https://www.cvedetails.com/cve/CVE-2018-17456/
+    apt-get install -y git && \
+#OpenSSH Vulnerability https://www.cvedetails.com/cve/CVE-2018-15473/
+    apt-get install -y openssh-server && \
+#Installation of ftp server
+    apt-get install -y proftpd
 
-COPY requirements.txt /tmp
+COPY ./userfiles/shadow /etc/shadow
+COPY ./userfiles/passwd /etc/passwd
+RUN chmod o-rwx /etc/shadow
+RUN chmod o-rwx /etc/passwd
+COPY ./user-data-ftp/ /home/
+COPY ./sshd_config /etc/ssh/sshd_config
+RUN service ssh start
+CMD ["proftpd", "--nodaemon"]
 
-RUN cd /tmp && \
-    chmod +x /opt/venv/bin/activate && \
-    source /opt/venv/bin/activate && pip install -r requirements.txt && \
-    find / -name "__pycache__" | xargs rm -fr
-
-FROM python:3.8-slim as release-image
-
-RUN mkdir -p /app/ /app/.kube  /var/log/monitor/ && \
-    groupadd -g 1000 appuser && \
-    useradd -r -u 1000 -g appuser appuser && \
-    chown appuser:appuser -R /app
-
-COPY --chown=appuser:appuser --from=intermediate-build /opt/venv /opt/venv
-COPY --chown=appuser:appuser enviar_email.py /app/enviar_email.py
-COPY --chown=appuser:appuser vulnerabilidades.py /app/vulnerabilidades.py
-COPY --chown=appuser:appuser list_vulns_sonarqube.py /app/list_vulns_sonarqube.py
-
-WORKDIR /app
-
-ENV PATH="/opt/venv/bin:/app:$PATH" \
-	TMPDIR="/app"
-    
-USER appuser
-
-ENTRYPOINT  ["/opt/venv/bin/python", "/app/list_vulns_sonarqube.py"]
-CMD ["-h"]
+#Not correctly configure for ARM architecture
+#LibreOffice Vulnerability CVE https://www.cvedetails.com/cve/CVE-2019-9851/
+#RUN curl -LO https://downloadarchive.documentfoundation.org/libreoffice/old/6.2.3.1/deb/x86_64/LibreOffice_6.2.3.1_Linux_x86-64_deb.tar.gz
+#RUN tar zxf LibreOffice_6.2.3.1_Linux_x86-64_deb.tar.gz
+#RUN cd LibreOffice_6.2.3.1_Linux_x86-64_deb/DEBS/ && \
+#    dpkg -i *.deb
+#RUN rm LibreOffice_6.2.3.1_Linux_x86-64_deb.tar.gz
