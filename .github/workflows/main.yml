@@ -135,11 +135,11 @@ jobs:
         uses: zaproxy/action-full-scan@v0.7.0
         with:
           target: 'https://www.admingb.com/'
-          cmd_options: '-x ZAP_results'
+          cmd_options: '-x zap-baseline-scan-report.xml'
           
 
       - name: Upload Test results
         uses: actions/upload-artifact@master
         with:
           name: ZAP report
-          path: ${{github.workspace}}/ZAP_results.xml
+          path: ${{github.workspace}}/zap-baseline-scan-report.xml
