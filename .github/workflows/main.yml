@@ -128,16 +128,9 @@ jobs:
   OWASP_ZAP:
     name: OWASP ZAP Scan
     runs-on: ubuntu-latest
-    continue-on-error: true    
 #    needs: [trivy]
     steps:
-      - name: ZAP Scan
-        uses: gastonbarbaccia/zap-action-full-scan@v0.1.1
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.7.0
         with:
-          target: 'https://www.admingb.com/'
-      
-      - name: Upload Test results
-        uses: actions/upload-artifact@master
-        with:
-          name: ZAP report
-          path: ${{github.workspace}}/report_json.json
+          target: "https://www.admingb.com"
