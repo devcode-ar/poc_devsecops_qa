@@ -135,7 +135,7 @@ jobs:
         uses: zaproxy/action-full-scan@v0.7.0
         with:
           target: 'https://www.admingb.com/'
-          cmd_options: '-x zap-baseline-scan-report.xml'
+          cmd_options: '-x'
           
 
       - name: Upload Test results
